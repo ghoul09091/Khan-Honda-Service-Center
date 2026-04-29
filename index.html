@@ -88,6 +88,17 @@ li{background:#eee;margin:5px 0;padding:8px;border-radius:6px;display:flex;justi
 </div>
 
 <script>
+ const firebaseConfig = {
+  apiKey: "PASTE_YOURS",
+  authDomain: "PASTE_YOURS",
+  projectId: "PASTE_YOURS",
+  storageBucket: "PASTE_YOURS",
+  messagingSenderId: "PASTE_YOURS",
+  appId: "PASTE_YOURS"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 // LOGIN
 function login(){
  if(document.getElementById('password').value==='admin123'){
@@ -104,20 +115,28 @@ let bikes=JSON.parse(localStorage.getItem('bikes'))||[];
 let appts=JSON.parse(localStorage.getItem('appts'))||[];
 let promos=JSON.parse(localStorage.getItem('promos'))||[];
 
-function save(){
- localStorage.setItem('inventory',JSON.stringify(inventory));
- localStorage.setItem('clients',JSON.stringify(clients));
- localStorage.setItem('bikes',JSON.stringify(bikes));
- localStorage.setItem('appts',JSON.stringify(appts));
- localStorage.setItem('promos',JSON.stringify(promos));
+function addItem(){
+  db.collection("inventory").add({
+    name: itemName.value,
+    qty: itemQty.value,
+    time: new Date()
+  });
+
+  itemName.value = "";
+  itemQty.value = "";
 }
 
-function loadData(){
- inventory.forEach((i,idx)=>renderInventory(i,idx));
- clients.forEach((c,idx)=>renderClient(c,idx));
- bikes.forEach((b,idx)=>renderBike(b,idx));
- appts.forEach((a,idx)=>renderAppt(a,idx));
- promos.forEach((p,idx)=>renderPromo(p,idx));
+function loadInventory(){
+  db.collection("inventory").onSnapshot(snapshot => {
+    inventoryTable.innerHTML = "<tr><th>Item</th><th>Qty</th></tr>";
+
+    snapshot.forEach(doc => {
+      let data = doc.data();
+
+      let row = inventoryTable.insertRow();
+      row.innerHTML = `<td>${data.name}</td><td>${data.qty}</td>`;
+    });
+  });
 }
 
 // INVENTORY
