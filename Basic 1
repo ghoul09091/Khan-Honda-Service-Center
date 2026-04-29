@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Khan Honda Service Center</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Poppins;background:#f5f7fa}
+.hidden{display:none}
+header{background:#0f172a;color:#fff;padding:20px;text-align:center}
+nav{display:flex;justify-content:center;gap:20px;background:#111827;padding:10px}
+nav a{color:#fff;text-decoration:none}
+section{max-width:1100px;margin:20px auto;background:#fff;padding:20px;border-radius:10px}
+input,textarea{padding:8px;margin:5px;border:1px solid #ccc;border-radius:6px}
+button{padding:8px 12px;background:#0ea5e9;color:#fff;border:none;border-radius:6px;cursor:pointer}
+table{width:100%;margin-top:10px;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid #ddd}
+ul{list-style:none}
+li{background:#eee;margin:5px 0;padding:8px;border-radius:6px;display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<section id="loginSection">
+<h2>Admin Login</h2>
+<input id="password" type="password" placeholder="Enter Password">
+<button onclick="login()">Login</button>
+</section>
+
+<div id="app" class="hidden">
+<header>
+<h1>Khan Honda Service Center</h1>
+</header>
+
+<nav>
+<a href="#inventory">Inventory</a>
+<a href="#clients">Clients</a>
+<a href="#bikes">Bikes</a>
+<a href="#appointments">Appointments</a>
+<a href="#promotions">Promotions</a>
+</nav>
+
+<section id="inventory">
+<h2>Inventory</h2>
+<input id="itemName" placeholder="Item">
+<input id="itemQty" type="number" placeholder="Qty">
+<button onclick="addItem()">Add</button>
+<table id="inventoryTable"><tr><th>Item</th><th>Qty</th><th></th></tr></table>
+</section>
+
+<section id="clients">
+<h2>Clients</h2>
+<input id="clientName" placeholder="Name">
+<input id="service" placeholder="Service">
+<input id="bill" placeholder="Bill">
+<button onclick="addClient()">Add</button>
+<table id="clientTable"><tr><th>Name</th><th>Service</th><th>Bill</th><th></th></tr></table>
+</section>
+
+<section id="bikes">
+<h2>Bikes</h2>
+<input id="bikeName" placeholder="Bike">
+<input id="bikePrice" placeholder="Price">
+<button onclick="addBike()">Add</button>
+<ul id="bikeList"></ul>
+</section>
+
+<section id="appointments">
+<h2>Appointments</h2>
+<input id="apptName" placeholder="Name">
+<input id="apptDate" type="date">
+<button onclick="bookAppt()">Add</button>
+<ul id="apptList"></ul>
+</section>
+
+<section id="promotions">
+<h2>Promotions</h2>
+<textarea id="promoText"></textarea>
+<button onclick="addPromo()">Add</button>
+<ul id="promoList"></ul>
+</section>
+</div>
+
+<script>
+// LOGIN
+function login(){
+ if(document.getElementById('password').value==='admin123'){
+  document.getElementById('loginSection').style.display='none';
+  document.getElementById('app').classList.remove('hidden');
+  loadData();
+ }
+}
+
+// STORAGE
+let inventory=JSON.parse(localStorage.getItem('inventory'))||[];
+let clients=JSON.parse(localStorage.getItem('clients'))||[];
+let bikes=JSON.parse(localStorage.getItem('bikes'))||[];
+let appts=JSON.parse(localStorage.getItem('appts'))||[];
+let promos=JSON.parse(localStorage.getItem('promos'))||[];
+
+function save(){
+ localStorage.setItem('inventory',JSON.stringify(inventory));
+ localStorage.setItem('clients',JSON.stringify(clients));
+ localStorage.setItem('bikes',JSON.stringify(bikes));
+ localStorage.setItem('appts',JSON.stringify(appts));
+ localStorage.setItem('promos',JSON.stringify(promos));
+}
+
+function loadData(){
+ inventory.forEach((i,idx)=>renderInventory(i,idx));
+ clients.forEach((c,idx)=>renderClient(c,idx));
+ bikes.forEach((b,idx)=>renderBike(b,idx));
+ appts.forEach((a,idx)=>renderAppt(a,idx));
+ promos.forEach((p,idx)=>renderPromo(p,idx));
+}
+
+// INVENTORY
+function addItem(){
+ let item={name:itemName.value,qty:itemQty.value};
+ inventory.push(item); save(); renderInventory(item,inventory.length-1);
+}
+function renderInventory(item,i){
+ let row=inventoryTable.insertRow();
+ row.innerHTML=`<td>${item.name}</td><td>${item.qty}</td><td><button onclick="delInv(${i})">X</button></td>`;
+}
+function delInv(i){inventory.splice(i,1);save();location.reload();}
+
+// CLIENTS
+function addClient(){
+ let c={name:clientName.value,service:service.value,bill:bill.value};
+ clients.push(c); save(); renderClient(c,clients.length-1);
+}
+function renderClient(c,i){
+ let row=clientTable.insertRow();
+ row.innerHTML=`<td>${c.name}</td><td>${c.service}</td><td>${c.bill}</td><td><button onclick="delClient(${i})">X</button></td>`;
+}
+function delClient(i){clients.splice(i,1);save();location.reload();}
+
+// BIKES
+function addBike(){
+ let b={name:bikeName.value,price:bikePrice.value};
+ bikes.push(b); save(); renderBike(b,bikes.length-1);
+}
+function renderBike(b,i){
+ let li=document.createElement('li');
+ li.innerHTML=`${b.name} - $${b.price} <button onclick="delBike(${i})">X</button>`;
+ bikeList.appendChild(li);
+}
+function delBike(i){bikes.splice(i,1);save();location.reload();}
+
+// APPOINTMENTS
+function bookAppt(){
+ let a={name:apptName.value,date:apptDate.value};
+ appts.push(a); save(); renderAppt(a,appts.length-1);
+}
+function renderAppt(a,i){
+ let li=document.createElement('li');
+ li.innerHTML=`${a.name} - ${a.date} <button onclick="delAppt(${i})">X</button>`;
+ apptList.appendChild(li);
+}
+function delAppt(i){appts.splice(i,1);save();location.reload();}
+
+// PROMOS
+function addPromo(){
+ let p=promoText.value;
+ promos.push(p); save(); renderPromo(p,promos.length-1);
+}
+function renderPromo(p,i){
+ let li=document.createElement('li');
+ li.innerHTML=`${p} <button onclick="delPromo(${i})">X</button>`;
+ promoList.appendChild(li);
+}
+function delPromo(i){promos.splice(i,1);save();location.reload();}
+</script>
+
+</body>
+</html>
