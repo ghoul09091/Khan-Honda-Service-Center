@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <meta charset="UTF-8">
 <title>Khan Honda Service Center</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Poppins;background:#f5f7fa}
+body{font-family:Poppins;background:#f5f7fa;margin:0}
 .hidden{display:none}
 header{background:#0f172a;color:#fff;padding:20px;text-align:center}
 nav{display:flex;justify-content:center;gap:20px;background:#111827;padding:10px}
@@ -20,10 +21,11 @@ input,textarea{padding:8px;margin:5px;border:1px solid #ccc;border-radius:6px}
 button{padding:8px 12px;background:#0ea5e9;color:#fff;border:none;border-radius:6px;cursor:pointer}
 table{width:100%;margin-top:10px;border-collapse:collapse}
 th,td{padding:8px;border-bottom:1px solid #ddd}
-ul{list-style:none}
+ul{list-style:none;padding:0}
 li{background:#eee;margin:5px 0;padding:8px;border-radius:6px;display:flex;justify-content:space-between}
 </style>
 </head>
+
 <body>
 
 <!-- LOGIN -->
@@ -34,6 +36,7 @@ li{background:#eee;margin:5px 0;padding:8px;border-radius:6px;display:flex;justi
 </section>
 
 <div id="app" class="hidden">
+
 <header>
 <h1>Khan Honda Service Center</h1>
 </header>
@@ -46,23 +49,30 @@ li{background:#eee;margin:5px 0;padding:8px;border-radius:6px;display:flex;justi
 <a href="#promotions">Promotions</a>
 </nav>
 
+<!-- INVENTORY -->
 <section id="inventory">
 <h2>Inventory</h2>
 <input id="itemName" placeholder="Item">
 <input id="itemQty" type="number" placeholder="Qty">
 <button onclick="addItem()">Add</button>
-<table id="inventoryTable"><tr><th>Item</th><th>Qty</th><th></th></tr></table>
+<table id="inventoryTable">
+<tr><th>Item</th><th>Qty</th><th>Action</th></tr>
+</table>
 </section>
 
+<!-- CLIENTS -->
 <section id="clients">
 <h2>Clients</h2>
 <input id="clientName" placeholder="Name">
 <input id="service" placeholder="Service">
 <input id="bill" placeholder="Bill">
 <button onclick="addClient()">Add</button>
-<table id="clientTable"><tr><th>Name</th><th>Service</th><th>Bill</th><th></th></tr></table>
+<table id="clientTable">
+<tr><th>Name</th><th>Service</th><th>Bill</th><th>Action</th></tr>
+</table>
 </section>
 
+<!-- BIKES -->
 <section id="bikes">
 <h2>Bikes</h2>
 <input id="bikeName" placeholder="Bike">
@@ -71,6 +81,7 @@ li{background:#eee;margin:5px 0;padding:8px;border-radius:6px;display:flex;justi
 <ul id="bikeList"></ul>
 </section>
 
+<!-- APPOINTMENTS -->
 <section id="appointments">
 <h2>Appointments</h2>
 <input id="apptName" placeholder="Name">
@@ -79,16 +90,19 @@ li{background:#eee;margin:5px 0;padding:8px;border-radius:6px;display:flex;justi
 <ul id="apptList"></ul>
 </section>
 
+<!-- PROMOS -->
 <section id="promotions">
 <h2>Promotions</h2>
 <textarea id="promoText"></textarea>
 <button onclick="addPromo()">Add</button>
 <ul id="promoList"></ul>
 </section>
+
 </div>
 
 <script>
- const firebaseConfig = {
+// ---------------- FIREBASE ----------------
+const firebaseConfig = {
   apiKey: "PASTE_YOURS",
   authDomain: "PASTE_YOURS",
   projectId: "PASTE_YOURS",
@@ -99,22 +113,49 @@ li{background:#eee;margin:5px 0;padding:8px;border-radius:6px;display:flex;justi
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-// LOGIN
+
+// ---------------- DOM ELEMENTS ----------------
+const password = document.getElementById("password");
+
+const itemName = document.getElementById("itemName");
+const itemQty = document.getElementById("itemQty");
+const inventoryTable = document.getElementById("inventoryTable");
+
+const clientName = document.getElementById("clientName");
+const service = document.getElementById("service");
+const bill = document.getElementById("bill");
+const clientTable = document.getElementById("clientTable");
+
+const bikeName = document.getElementById("bikeName");
+const bikePrice = document.getElementById("bikePrice");
+const bikeList = document.getElementById("bikeList");
+
+const apptName = document.getElementById("apptName");
+const apptDate = document.getElementById("apptDate");
+const apptList = document.getElementById("apptList");
+
+const promoText = document.getElementById("promoText");
+const promoList = document.getElementById("promoList");
+
+// ---------------- LOGIN ----------------
 function login(){
- if(document.getElementById('password').value==='admin123'){
-  document.getElementById('loginSection').style.display='none';
-  document.getElementById('app').classList.remove('hidden');
-  loadData();
- }
+  if(password.value === "admin123"){
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("app").classList.remove("hidden");
+    loadAll();
+  }
 }
 
-// STORAGE
-let inventory=JSON.parse(localStorage.getItem('inventory'))||[];
-let clients=JSON.parse(localStorage.getItem('clients'))||[];
-let bikes=JSON.parse(localStorage.getItem('bikes'))||[];
-let appts=JSON.parse(localStorage.getItem('appts'))||[];
-let promos=JSON.parse(localStorage.getItem('promos'))||[];
+// ---------------- LOAD ALL DATA ----------------
+function loadAll(){
+  loadInventory();
+  loadClients();
+  loadBikes();
+  loadAppts();
+  loadPromos();
+}
 
+// ---------------- INVENTORY ----------------
 function addItem(){
   db.collection("inventory").add({
     name: itemName.value,
@@ -127,75 +168,133 @@ function addItem(){
 }
 
 function loadInventory(){
-  db.collection("inventory").onSnapshot(snapshot => {
-    inventoryTable.innerHTML = "<tr><th>Item</th><th>Qty</th></tr>";
+  db.collection("inventory").onSnapshot(snapshot=>{
+    inventoryTable.innerHTML = "<tr><th>Item</th><th>Qty</th><th>Action</th></tr>";
 
-    snapshot.forEach(doc => {
-      let data = doc.data();
+    snapshot.forEach(doc=>{
+      const d = doc.data();
 
       let row = inventoryTable.insertRow();
-      row.innerHTML = `<td>${data.name}</td><td>${data.qty}</td>`;
+      row.innerHTML = `
+        <td>${d.name}</td>
+        <td>${d.qty}</td>
+        <td><button onclick="deleteDoc('inventory','${doc.id}')">X</button></td>
+      `;
     });
   });
 }
 
-// INVENTORY
-function addItem(){
- let item={name:itemName.value,qty:itemQty.value};
- inventory.push(item); save(); renderInventory(item,inventory.length-1);
-}
-function renderInventory(item,i){
- let row=inventoryTable.insertRow();
- row.innerHTML=`<td>${item.name}</td><td>${item.qty}</td><td><button onclick="delInv(${i})">X</button></td>`;
-}
-function delInv(i){inventory.splice(i,1);save();location.reload();}
-
-// CLIENTS
+// ---------------- CLIENTS ----------------
 function addClient(){
- let c={name:clientName.value,service:service.value,bill:bill.value};
- clients.push(c); save(); renderClient(c,clients.length-1);
-}
-function renderClient(c,i){
- let row=clientTable.insertRow();
- row.innerHTML=`<td>${c.name}</td><td>${c.service}</td><td>${c.bill}</td><td><button onclick="delClient(${i})">X</button></td>`;
-}
-function delClient(i){clients.splice(i,1);save();location.reload();}
+  db.collection("clients").add({
+    name: clientName.value,
+    service: service.value,
+    bill: bill.value
+  });
 
-// BIKES
+  clientName.value="";
+  service.value="";
+  bill.value="";
+}
+
+function loadClients(){
+  db.collection("clients").onSnapshot(snapshot=>{
+    clientTable.innerHTML = "<tr><th>Name</th><th>Service</th><th>Bill</th><th>Action</th></tr>";
+
+    snapshot.forEach(doc=>{
+      const d = doc.data();
+
+      let row = clientTable.insertRow();
+      row.innerHTML = `
+        <td>${d.name}</td>
+        <td>${d.service}</td>
+        <td>${d.bill}</td>
+        <td><button onclick="deleteDoc('clients','${doc.id}')">X</button></td>
+      `;
+    });
+  });
+}
+
+// ---------------- BIKES ----------------
 function addBike(){
- let b={name:bikeName.value,price:bikePrice.value};
- bikes.push(b); save(); renderBike(b,bikes.length-1);
-}
-function renderBike(b,i){
- let li=document.createElement('li');
- li.innerHTML=`${b.name} - $${b.price} <button onclick="delBike(${i})">X</button>`;
- bikeList.appendChild(li);
-}
-function delBike(i){bikes.splice(i,1);save();location.reload();}
+  db.collection("bikes").add({
+    name: bikeName.value,
+    price: bikePrice.value
+  });
 
-// APPOINTMENTS
+  bikeName.value="";
+  bikePrice.value="";
+}
+
+function loadBikes(){
+  db.collection("bikes").onSnapshot(snapshot=>{
+    bikeList.innerHTML="";
+
+    snapshot.forEach(doc=>{
+      const d=doc.data();
+
+      let li=document.createElement("li");
+      li.innerHTML=`${d.name} - ${d.price}
+      <button onclick="deleteDoc('bikes','${doc.id}')">X</button>`;
+      bikeList.appendChild(li);
+    });
+  });
+}
+
+// ---------------- APPOINTMENTS ----------------
 function bookAppt(){
- let a={name:apptName.value,date:apptDate.value};
- appts.push(a); save(); renderAppt(a,appts.length-1);
-}
-function renderAppt(a,i){
- let li=document.createElement('li');
- li.innerHTML=`${a.name} - ${a.date} <button onclick="delAppt(${i})">X</button>`;
- apptList.appendChild(li);
-}
-function delAppt(i){appts.splice(i,1);save();location.reload();}
+  db.collection("appointments").add({
+    name: apptName.value,
+    date: apptDate.value
+  });
 
-// PROMOS
+  apptName.value="";
+  apptDate.value="";
+}
+
+function loadAppts(){
+  db.collection("appointments").onSnapshot(snapshot=>{
+    apptList.innerHTML="";
+
+    snapshot.forEach(doc=>{
+      const d=doc.data();
+
+      let li=document.createElement("li");
+      li.innerHTML=`${d.name} - ${d.date}
+      <button onclick="deleteDoc('appointments','${doc.id}')">X</button>`;
+      apptList.appendChild(li);
+    });
+  });
+}
+
+// ---------------- PROMOS ----------------
 function addPromo(){
- let p=promoText.value;
- promos.push(p); save(); renderPromo(p,promos.length-1);
+  db.collection("promotions").add({
+    text: promoText.value
+  });
+
+  promoText.value="";
 }
-function renderPromo(p,i){
- let li=document.createElement('li');
- li.innerHTML=`${p} <button onclick="delPromo(${i})">X</button>`;
- promoList.appendChild(li);
+
+function loadPromos(){
+  db.collection("promotions").onSnapshot(snapshot=>{
+    promoList.innerHTML="";
+
+    snapshot.forEach(doc=>{
+      const d=doc.data();
+
+      let li=document.createElement("li");
+      li.innerHTML=`${d.text}
+      <button onclick="deleteDoc('promotions','${doc.id}')">X</button>`;
+      promoList.appendChild(li);
+    });
+  });
 }
-function delPromo(i){promos.splice(i,1);save();location.reload();}
+
+// ---------------- DELETE FUNCTION ----------------
+function deleteDoc(collection, id){
+  db.collection(collection).doc(id).delete();
+}
 </script>
 
 </body>
