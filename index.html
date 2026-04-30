@@ -16,12 +16,80 @@ body{font-family:Poppins;background:#eef2f7}
 
 /* LOGIN */
 #loginSection{
-display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(135deg,#0f172a,#1e293b);
 }
-#loginSection input{padding:12px;width:250px;margin:10px;border-radius:8px;border:1px solid #ccc;}
-#loginSection button{padding:12px 20px;background:#2563eb;color:white;border:none;border-radius:8px;cursor:pointer;}
 
-#app{display:none}
+/* GLASS BOX */
+.loginBox{
+  width:320px;
+  padding:30px;
+  border-radius:18px;
+
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+
+  text-align:center;
+  color:white;
+}
+
+.loginBox h2{
+  margin-bottom:20px;
+  font-weight:600;
+}
+
+/* INPUT */
+.loginBox input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+  color:white;
+
+  outline:none;
+}
+
+.loginBox input::placeholder{
+  color: rgba(255,255,255,0.6);
+}
+
+/* BUTTON */
+.loginBox button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+
+  border:none;
+  border-radius:10px;
+
+  background: linear-gradient(90deg,#2563eb,#1d4ed8);
+  color:white;
+  font-weight:600;
+
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.loginBox button:hover{
+  transform: scale(1.03);
+}
+
+/* ERROR */
+#errorMsg{
+  color:#ff4d4d;
+  margin-top:10px;
+  font-size:14px;
+}
 
 /* HEADER */
 header{
@@ -79,10 +147,15 @@ display:none;z-index:2000;
 
 <!-- LOGIN -->
 <div id="loginSection">
-<h2>Khan Honda Panel</h2>
-<input id="password" type="password" placeholder="Enter Password">
-<button onclick="login()">Login</button>
-<p id="errorMsg" style="color:red"></p>
+  <div class="loginBox">
+    <h2>🔧 Khan Honda Panel</h2>
+
+    <input id="password" type="password" placeholder="Enter Password">
+
+    <button onclick="login()">Login</button>
+
+    <p id="errorMsg"></p>
+  </div>
 </div>
 
 <!-- APP -->
