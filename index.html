@@ -15,12 +15,17 @@
 body{font-family:Poppins;background:#eef2f7}
 
 /* LOGIN */
-#loginSection{
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: linear-gradient(135deg,#0f172a,#1e293b);
+#loginSection.shake{
+  animation: shake 0.4s;
+}
+
+@keyframes shake{
+  0%{transform:translateX(0)}
+  20%{transform:translateX(-10px)}
+  40%{transform:translateX(10px)}
+  60%{transform:translateX(-10px)}
+  80%{transform:translateX(10px)}
+  100%{transform:translateX(0)}
 }
 
 /* GLASS BOX */
@@ -146,17 +151,22 @@ display:none;z-index:2000;
 <body>
 
 <!-- LOGIN -->
-<div id="loginSection">
-  <div class="loginBox">
-    <h2>🔧 Khan Honda Panel</h2>
+function login(){
+  if(password.value === "admin123"){
+    loginSection.classList.remove("shake");
+    loginSection.style.display = "none";
+    app.style.display = "block";
+    showPage("billingCRM");
+  } else {
 
-    <input id="password" type="password" placeholder="Enter Password">
+    document.getElementById("errorMsg").innerText = "Invalid Password";
 
-    <button onclick="login()">Login</button>
-
-    <p id="errorMsg"></p>
-  </div>
-</div>
+    // trigger shake
+    loginSection.classList.remove("shake"); // reset
+    void loginSection.offsetWidth; // restart animation
+    loginSection.classList.add("shake");
+  }
+}
 
 <!-- APP -->
 <div id="app">
