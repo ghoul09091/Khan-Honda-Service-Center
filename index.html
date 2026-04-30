@@ -168,11 +168,20 @@ const db = firebase.firestore();
 
 /* LOGIN */
 function login(){
-if(password.value==="admin123"){
-loginSection.style.display="none";
-app.style.display="block";
-showPage("billingCRM");
-}
+  if(password.value === "admin123"){
+    loginSection.classList.remove("shake");
+    loginSection.style.display = "none";
+    app.style.display = "block";
+    showPage("billingCRM");
+  } else {
+
+    document.getElementById("errorMsg").innerText = "Invalid Password";
+
+    // trigger shake
+    loginSection.classList.remove("shake"); // reset
+    void loginSection.offsetWidth; // restart animation
+    loginSection.classList.add("shake");
+  }
 }
 
 /* MENU */
