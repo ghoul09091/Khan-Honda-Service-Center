@@ -138,6 +138,7 @@ button{
   <a onclick="showPage('bikes')">🏍 Bikes</a>
   <a onclick="showPage('appointments')">📅 Appointments</a>
   <a onclick="showPage('promotions')">🔥 Promotions</a>
+  <a onclick="showPage('billing')">💰 Billing</a>
 </div>
 
 <!-- INVENTORY -->
@@ -222,6 +223,46 @@ button{
 </div>
 </div>
 
+<!-- BILLING -->
+<div id="billing" class="page">
+  <div class="card">
+    <h2>💰 Generate Invoice</h2>
+
+    <!-- Select Client -->
+    <input id="billClientPhone" placeholder="Enter Client Phone">
+    <button onclick="loadBillingClient()">Load Client</button>
+
+    <div id="billingClientInfo" style="display:none; margin-top:10px;">
+      <p>Name: <span id="billClientName"></span></p>
+      <p>Bike: <span id="billClientBike"></span></p>
+      <p>Address: <span id="billClientAddress"></span></p>
+    </div>
+
+    <hr>
+
+    <!-- Services Table -->
+    <table id="servicesTable" style="width:100%; margin-bottom:10px;">
+      <tr>
+        <th>Service</th>
+        <th>Price</th>
+        <th>Action</th>
+      </tr>
+    </table>
+    <button onclick="addServiceRow()">+ Add Service</button>
+
+    <hr>
+
+    <!-- Totals -->
+    <p>Subtotal: <span id="subtotal">0</span></p>
+    <p>Tax (5%): <span id="tax">0</span></p>
+    <p>Discount: <input id="discount" type="number" value="0" oninput="updateTotals()"> </p>
+    <p><strong>Total: <span id="total">0</span></strong></p>
+
+    <button onclick="saveInvoice()">Save Invoice</button>
+    <button onclick="printInvoice()">Print Invoice</button>
+  </div>
+</div>
+
 </div>
 
 <script>
@@ -235,6 +276,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let currentPhone = null;
+let billingClientPhone = null;
 
 /* LOGIN */
 function login(){
@@ -362,6 +404,113 @@ function addPromo(){
   db.collection("promotions").add({
     text:promoText.value
   });
+}
+
+/* BILLING */
+function loadBillingClient() {
+  const phone = billClientPhone.value;
+  billingClientPhone = phone;
+
+  db.collection("clients").doc(phone).get().then(doc => {
+    if(!doc.exists){ alert("Client not found"); return; }
+    let d = doc.data();
+    billingClientName.innerText = d.name;
+    billingClientBike.innerText = d.bike;
+    billingClientAddress.innerText = d.address || "-";
+    billingClientInfo.style.display = "block";
+  });
+}
+
+function addServiceRow(service='', price='') {
+  const table = servicesTable;
+  const row = table.insertRow();
+  row.innerHTML = `
+    <td><input type="text" class="serviceType" value="${service}"></td>
+    <td><input type="number" class="servicePrice" value="${price}" oninput="updateTotals()"></td>
+    <td><button onclick="removeServiceRow(this)">❌</button></td>
+  `;
+  updateTotals();
+}
+
+function removeServiceRow(btn){
+  btn.closest('tr').remove();
+  updateTotals();
+}
+
+function updateTotals() {
+  let subtotal = 0;
+  document.querySelectorAll('.servicePrice').forEach(p => {
+    subtotal += parseFloat(p.value) || 0;
+  });
+  let tax = subtotal * 0.05;
+  let discountVal = parseFloat(discount.value) || 0;
+  let total = subtotal + tax - discountVal;
+
+  subtotalElem.innerText = subtotal.toFixed(2);
+  taxElem.innerText = tax.toFixed(2);
+  totalElem.innerText = total.toFixed(2);
+}
+
+function saveInvoice(){
+  if(!billingClientPhone){ alert("Load client first"); return; }
+
+  const services = [];
+  document.querySelectorAll('#servicesTable tr').forEach((tr, i) => {
+    if(i===0) return;
+    const type = tr.querySelector('.serviceType').value;
+    const price = parseFloat(tr.querySelector('.servicePrice').value) || 0;
+    if(type) services.push({type, price});
+  });
+
+  if(services.length===0){ alert("Add at least 1 service"); return; }
+
+  const invoiceNumber = "INV"+Date.now();
+  const subtotalVal = parseFloat(subtotalElem.innerText);
+  const taxVal = parseFloat(taxElem.innerText);
+  const discountVal = parseFloat(discount.value) || 0;
+  const totalVal = parseFloat(totalElem.innerText);
+
+  db.collection("invoices").doc(invoiceNumber).set({
+    invoiceNumber,
+    clientPhone: billingClientPhone,
+    clientName: billingClientName.innerText,
+    bike: billingClientBike.innerText,
+    address: billingClientAddress.innerText,
+    services,
+    subtotal: subtotalVal,
+    tax: taxVal,
+    discount: discountVal,
+    total: totalVal,
+    date: new Date().toISOString()
+  }).then(()=>{
+    alert("Invoice saved!");
+  });
+}
+
+function printInvoice(){
+  let html = `<h2>Invoice</h2>
+  <p>Client: ${billingClientName.innerText}</p>
+  <p>Bike: ${billingClientBike.innerText}</p>
+  <p>Address: ${billingClientAddress.innerText}</p>
+  <table border="1" cellspacing="0" cellpadding="5" style="width:100%; margin-top:10px;">
+    <tr><th>Service</th><th>Price</th></tr>`;
+
+  document.querySelectorAll('#servicesTable tr').forEach((tr,i)=>{
+    if(i===0) return;
+    const type = tr.querySelector('.serviceType').value;
+    const price = tr.querySelector('.servicePrice').value;
+    html += `<tr><td>${type}</td><td>${price}</td></tr>`;
+  });
+  html += `</table>
+  <p>Subtotal: ${subtotalElem.innerText}</p>
+  <p>Tax: ${taxElem.innerText}</p>
+  <p>Discount: ${discount.value}</p>
+  <p>Total: ${totalElem.innerText}</p>
+  <script>window.print();</script>`;
+
+  const w = window.open();
+  w.document.write(html);
+  w.document.close();
 }
 
 /* LOAD ALL */
