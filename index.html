@@ -369,15 +369,7 @@ function saveInvoice(){
 
   let invoiceId = "KH-" + Date.now();
 
-  db.collection("invoices").doc(invoiceId).set({
-    invoiceId,
-    client: currentClient,
-    services,
-    total: parseFloat(total.innerText),
-    status: "Pending",
-    date: new Date().toISOString()
-  }).then(() => {
-    alert("Invoice Saved Successfully!");
+  
 
     // reset UI
     billingBox.style.display = "none";
