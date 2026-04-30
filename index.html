@@ -8,146 +8,207 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
 <style>
-body{font-family:Poppins;background:#f5f7fa;margin:0}
-.hidden{display:none}
-header{background:#0f172a;color:#fff;padding:20px;text-align:center}
-nav{display:flex;justify-content:center;gap:20px;background:#111827;padding:10px}
-nav a{color:#fff;text-decoration:none}
-section{max-width:1100px;margin:20px auto;background:#fff;padding:20px;border-radius:10px}
-input,textarea{padding:8px;margin:5px;border:1px solid #ccc;border-radius:6px}
-button{padding:8px 12px;background:#0ea5e9;color:#fff;border:none;border-radius:6px;cursor:pointer}
-table{width:100%;margin-top:10px;border-collapse:collapse}
-th,td{padding:8px;border-bottom:1px solid #ddd}
-ul{list-style:none;padding:0}
-li{background:#eee;margin:5px 0;padding:8px;border-radius:6px;display:flex;justify-content:space-between}
+body{margin:0;font-family:sans-serif;background:#f5f7fa}
+
+/* LOGIN */
+#loginSection{
+  padding:40px;
+  text-align:center;
+}
+
+/* APP */
+#app{display:none}
+
+/* HEADER */
+header{
+  background:#0f172a;
+  color:#fff;
+  padding:15px;
+  display:flex;
+  align-items:center;
+}
+
+#menuBtn{
+  font-size:24px;
+  cursor:pointer;
+  margin-right:15px;
+}
+
+/* SIDEBAR */
+#sidebar{
+  position:fixed;
+  top:0;
+  left:-260px;
+  width:250px;
+  height:100%;
+  background:#fff;
+  box-shadow:2px 0 10px rgba(0,0,0,0.3);
+  transition:0.3s;
+  z-index:1000;
+}
+
+#sidebar a{
+  display:block;
+  padding:15px;
+  border-bottom:1px solid #eee;
+  cursor:pointer;
+}
+
+#sidebar a:hover{
+  background:#f1f1f1;
+}
+
+/* OVERLAY */
+#overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.4);
+  display:none;
+  z-index:999;
+}
+
+/* PAGES */
+.page{
+  display:none;
+  padding:20px;
+}
+
+.active{
+  display:block;
+}
+
+/* UI */
+input,textarea{
+  padding:8px;margin:5px;
+}
+
+button{
+  padding:8px 12px;
+  background:#0ea5e9;
+  color:#fff;
+  border:none;
+}
+
+table{width:100%;margin-top:10px}
+td,th{padding:8px;border-bottom:1px solid #ddd}
+li{margin:5px 0}
 </style>
 </head>
 
 <body>
 
 <!-- LOGIN -->
-<section id="loginSection">
-<h2>Admin Login</h2>
-<input id="password" type="password" placeholder="Enter Password">
-<button onclick="login()">Login</button>
-</section>
+<div id="loginSection">
+  <h2>Login</h2>
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
 
-<div id="app" class="hidden">
+<!-- APP -->
+<div id="app">
 
 <header>
-<h1>Khan Honda Service Center</h1>
+  <span id="menuBtn" onclick="openMenu()">☰</span>
+  <h3>Khan Honda Service</h3>
 </header>
 
-<nav>
-<a href="#inventory">Inventory</a>
-<a href="#clients">Clients</a>
-<a href="#bikes">Bikes</a>
-<a href="#appointments">Appointments</a>
-<a href="#promotions">Promotions</a>
-</nav>
+<div id="overlay" onclick="closeMenu()"></div>
 
-<!-- INVENTORY -->
-<section id="inventory">
+<div id="sidebar">
+  <a onclick="showPage('inventory')">Inventory</a>
+  <a onclick="showPage('clients')">Clients</a>
+  <a onclick="showPage('bikes')">Bikes</a>
+  <a onclick="showPage('appointments')">Appointments</a>
+  <a onclick="showPage('promotions')">Promotions</a>
+</div>
+
+<!-- PAGES -->
+
+<div id="inventory" class="page">
 <h2>Inventory</h2>
 <input id="itemName" placeholder="Item">
-<input id="itemQty" type="number" placeholder="Qty">
+<input id="itemQty" placeholder="Qty">
 <button onclick="addItem()">Add</button>
-<table id="inventoryTable">
-<tr><th>Item</th><th>Qty</th><th>Action</th></tr>
-</table>
-</section>
+<table id="inventoryTable"></table>
+</div>
 
-<!-- CLIENTS -->
-<section id="clients">
+<div id="clients" class="page">
 <h2>Clients</h2>
 <input id="clientName" placeholder="Name">
 <input id="service" placeholder="Service">
 <input id="bill" placeholder="Bill">
 <button onclick="addClient()">Add</button>
-<table id="clientTable">
-<tr><th>Name</th><th>Service</th><th>Bill</th><th>Action</th></tr>
-</table>
-</section>
+<table id="clientTable"></table>
+</div>
 
-<!-- BIKES -->
-<section id="bikes">
+<div id="bikes" class="page">
 <h2>Bikes</h2>
 <input id="bikeName" placeholder="Bike">
 <input id="bikePrice" placeholder="Price">
 <button onclick="addBike()">Add</button>
 <ul id="bikeList"></ul>
-</section>
+</div>
 
-<!-- APPOINTMENTS -->
-<section id="appointments">
+<div id="appointments" class="page">
 <h2>Appointments</h2>
 <input id="apptName" placeholder="Name">
 <input id="apptDate" type="date">
 <button onclick="bookAppt()">Add</button>
 <ul id="apptList"></ul>
-</section>
+</div>
 
-<!-- PROMOS -->
-<section id="promotions">
+<div id="promotions" class="page">
 <h2>Promotions</h2>
 <textarea id="promoText"></textarea>
 <button onclick="addPromo()">Add</button>
 <ul id="promoList"></ul>
-</section>
+</div>
 
 </div>
 
 <script>
-// ---------------- FIREBASE ----------------
+// FIREBASE
 const firebaseConfig = {
- apiKey: "AIzaSyBydNn5GqM0Wm_giiJMnfndoTyQx4w_APE",
-  authDomain: "khan-honda-service-center.firebaseapp.com",
-  projectId: "khan-honda-service-center",
-  storageBucket: "khan-honda-service-center.firebasestorage.app",
-  messagingSenderId: "68876808026",
-  appId: "1:68876808026:web:a9f3acb0eed06044918d63",
-
+ apiKey: "AIza...",
+ authDomain: "khan-honda-service-center.firebaseapp.com",
+ projectId: "khan-honda-service-center",
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ---------------- DOM ELEMENTS ----------------
-const password = document.getElementById("password");
-
-const itemName = document.getElementById("itemName");
-const itemQty = document.getElementById("itemQty");
-const inventoryTable = document.getElementById("inventoryTable");
-
-const clientName = document.getElementById("clientName");
-const service = document.getElementById("service");
-const bill = document.getElementById("bill");
-const clientTable = document.getElementById("clientTable");
-
-const bikeName = document.getElementById("bikeName");
-const bikePrice = document.getElementById("bikePrice");
-const bikeList = document.getElementById("bikeList");
-
-const apptName = document.getElementById("apptName");
-const apptDate = document.getElementById("apptDate");
-const apptList = document.getElementById("apptList");
-
-const promoText = document.getElementById("promoText");
-const promoList = document.getElementById("promoList");
-
-// ---------------- LOGIN ----------------
+// LOGIN
 function login(){
-  if(password.value === "admin123"){
-    document.getElementById("loginSection").style.display = "none";
-    document.getElementById("app").classList.remove("hidden");
+  if(document.getElementById("password").value==="admin123"){
+    document.getElementById("loginSection").style.display="none";
+    document.getElementById("app").style.display="block";
+    showPage("inventory");
     loadAll();
   }
 }
 
-// ---------------- LOAD ALL DATA ----------------
+// MENU
+function openMenu(){
+  document.getElementById("sidebar").style.left="0";
+  document.getElementById("overlay").style.display="block";
+}
+
+function closeMenu(){
+  document.getElementById("sidebar").style.left="-260px";
+  document.getElementById("overlay").style.display="none";
+}
+
+// PAGE SWITCH
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  closeMenu();
+}
+
+// LOAD ALL
 function loadAll(){
   loadInventory();
   loadClients();
@@ -156,145 +217,90 @@ function loadAll(){
   loadPromos();
 }
 
-// ---------------- INVENTORY ----------------
+// INVENTORY
 function addItem(){
   db.collection("inventory").add({
-    name: itemName.value,
-    qty: itemQty.value,
-    time: new Date()
+    name:itemName.value, qty:itemQty.value
   });
-
-  itemName.value = "";
-  itemQty.value = "";
+  itemName.value=""; itemQty.value="";
 }
 
 function loadInventory(){
-  db.collection("inventory").onSnapshot(snapshot=>{
-    inventoryTable.innerHTML = "<tr><th>Item</th><th>Qty</th><th>Action</th></tr>";
-
-    snapshot.forEach(doc=>{
-      const d = doc.data();
-
-      let row = inventoryTable.insertRow();
-      row.innerHTML = `
-        <td>${d.name}</td>
-        <td>${d.qty}</td>
-        <td><button onclick="deleteDoc('inventory','${doc.id}')">X</button></td>
-      `;
+  db.collection("inventory").onSnapshot(s=>{
+    inventoryTable.innerHTML="<tr><th>Item</th><th>Qty</th></tr>";
+    s.forEach(doc=>{
+      let d=doc.data();
+      inventoryTable.innerHTML+=`<tr><td>${d.name}</td><td>${d.qty}</td></tr>`;
     });
   });
 }
 
-// ---------------- CLIENTS ----------------
+// CLIENTS
 function addClient(){
   db.collection("clients").add({
-    name: clientName.value,
-    service: service.value,
-    bill: bill.value
+    name:clientName.value, service:service.value, bill:bill.value
   });
-
-  clientName.value="";
-  service.value="";
-  bill.value="";
 }
 
 function loadClients(){
-  db.collection("clients").onSnapshot(snapshot=>{
-    clientTable.innerHTML = "<tr><th>Name</th><th>Service</th><th>Bill</th><th>Action</th></tr>";
-
-    snapshot.forEach(doc=>{
-      const d = doc.data();
-
-      let row = clientTable.insertRow();
-      row.innerHTML = `
-        <td>${d.name}</td>
-        <td>${d.service}</td>
-        <td>${d.bill}</td>
-        <td><button onclick="deleteDoc('clients','${doc.id}')">X</button></td>
-      `;
+  db.collection("clients").onSnapshot(s=>{
+    clientTable.innerHTML="";
+    s.forEach(doc=>{
+      let d=doc.data();
+      clientTable.innerHTML+=`<tr><td>${d.name}</td><td>${d.service}</td><td>${d.bill}</td></tr>`;
     });
   });
 }
 
-// ---------------- BIKES ----------------
+// BIKES
 function addBike(){
   db.collection("bikes").add({
-    name: bikeName.value,
-    price: bikePrice.value
+    name:bikeName.value, price:bikePrice.value
   });
-
-  bikeName.value="";
-  bikePrice.value="";
 }
 
 function loadBikes(){
-  db.collection("bikes").onSnapshot(snapshot=>{
+  db.collection("bikes").onSnapshot(s=>{
     bikeList.innerHTML="";
-
-    snapshot.forEach(doc=>{
-      const d=doc.data();
-
-      let li=document.createElement("li");
-      li.innerHTML=`${d.name} - ${d.price}
-      <button onclick="deleteDoc('bikes','${doc.id}')">X</button>`;
-      bikeList.appendChild(li);
+    s.forEach(doc=>{
+      let d=doc.data();
+      bikeList.innerHTML+=`<li>${d.name} - ${d.price}</li>`;
     });
   });
 }
 
-// ---------------- APPOINTMENTS ----------------
+// APPOINTMENTS
 function bookAppt(){
   db.collection("appointments").add({
-    name: apptName.value,
-    date: apptDate.value
+    name:apptName.value, date:apptDate.value
   });
-
-  apptName.value="";
-  apptDate.value="";
 }
 
 function loadAppts(){
-  db.collection("appointments").onSnapshot(snapshot=>{
+  db.collection("appointments").onSnapshot(s=>{
     apptList.innerHTML="";
-
-    snapshot.forEach(doc=>{
-      const d=doc.data();
-
-      let li=document.createElement("li");
-      li.innerHTML=`${d.name} - ${d.date}
-      <button onclick="deleteDoc('appointments','${doc.id}')">X</button>`;
-      apptList.appendChild(li);
+    s.forEach(doc=>{
+      let d=doc.data();
+      apptList.innerHTML+=`<li>${d.name} - ${d.date}</li>`;
     });
   });
 }
 
-// ---------------- PROMOS ----------------
+// PROMOS
 function addPromo(){
   db.collection("promotions").add({
-    text: promoText.value
+    text:promoText.value
   });
-
-  promoText.value="";
 }
 
 function loadPromos(){
-  db.collection("promotions").onSnapshot(snapshot=>{
+  db.collection("promotions").onSnapshot(s=>{
     promoList.innerHTML="";
-
-    snapshot.forEach(doc=>{
-      const d=doc.data();
-
-      let li=document.createElement("li");
-      li.innerHTML=`${d.text}
-      <button onclick="deleteDoc('promotions','${doc.id}')">X</button>`;
-      promoList.appendChild(li);
+    s.forEach(doc=>{
+      let d=doc.data();
+      promoList.innerHTML+=`<li>${d.text}</li>`;
     });
   });
-}
-
-// ---------------- DELETE FUNCTION ----------------
-function deleteDoc(collection, id){
-  db.collection(collection).doc(id).delete();
 }
 </script>
 
