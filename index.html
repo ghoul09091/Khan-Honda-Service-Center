@@ -2,210 +2,369 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Khan Honda Service Center</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Business Website</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
-}
-
+*{margin:0;padding:0;box-sizing:border-box}
 body{
-  background:#0f172a;
-  color:white;
+  font-family:Poppins;
+  background:#eef2f7;
 }
 
-/* NAVBAR */
-nav{
+/* LOGIN */
+#loginSection{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+
+#loginSection input{
+  padding:12px;
+  width:250px;
+  margin:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+#loginSection button{
+  padding:12px 20px;
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:8px;
+}
+
+/* APP */
+#app{display:none}
+
+/* HEADER */
+header{
+  background:#111827;
+  color:white;
+  padding:15px;
+  display:flex;
+  align-items:center;
+  gap:15px;
   position:sticky;
   top:0;
-  background:rgba(15,23,42,0.9);
-  backdrop-filter:blur(10px);
-  padding:15px 30px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:1000;
 }
 
-nav h2{
-  color:#25D366;
-}
-
-nav ul{
-  display:flex;
-  gap:20px;
-  list-style:none;
-}
-
-nav ul li a{
-  color:white;
-  text-decoration:none;
-}
-
-/* HERO */
-.hero{
-  height:90vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  padding:20px;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-}
-
-.hero h1{
-  font-size:40px;
-}
-
-.hero p{
-  margin-top:10px;
-  color:#cbd5e1;
-}
-
-.btn{
-  margin-top:20px;
-  padding:12px 25px;
-  background:#25D366;
-  color:white;
-  border:none;
-  border-radius:30px;
+#menuBtn{
+  font-size:22px;
   cursor:pointer;
-  text-decoration:none;
 }
 
-/* SECTIONS */
-section{
-  padding:60px 20px;
-  text-align:center;
+/* SIDEBAR */
+#sidebar{
+  position:fixed;
+  top:0;
+  left:-270px;
+  width:260px;
+  height:100%;
+  background:#ffffff;
+  box-shadow:4px 0 25px rgba(0,0,0,0.15);
+  transition:0.35s ease;
+  z-index:1000;
+  padding-top:20px;
 }
 
-.services{
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  flex-wrap:wrap;
-}
-
-.card{
-  background:#1e293b;
+#sidebar h3{
   padding:20px;
-  border-radius:10px;
-  width:250px;
+  font-weight:600;
 }
 
-/* BOOKING */
-form{
-  max-width:400px;
-  margin:auto;
+#sidebar a{
   display:flex;
-  flex-direction:column;
+  align-items:center;
   gap:10px;
+  padding:14px 20px;
+  cursor:pointer;
+  color:#111;
+  font-size:15px;
 }
 
-input, select{
+#sidebar a:hover{
+  background:#f3f4f6;
+}
+
+/* OVERLAY */
+#overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  backdrop-filter:blur(3px);
+  background:rgba(0,0,0,0.3);
+  display:none;
+  z-index:999;
+}
+
+/* PAGE */
+.page{
+  display:none;
+  padding:20px;
+}
+
+.active{
+  display:block;
+}
+
+/* CARD */
+.card{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+  margin-bottom:20px;
+}
+
+/* INPUTS */
+input,textarea{
   padding:10px;
-  border:none;
-  border-radius:5px;
+  margin:5px;
+  border-radius:8px;
+  border:1px solid #ccc;
 }
 
 button{
-  padding:12px;
-  background:#25D366;
+  padding:10px 14px;
   border:none;
+  background:#2563eb;
   color:white;
-  border-radius:5px;
+  border-radius:8px;
   cursor:pointer;
 }
 
-/* FLOATING WHATSAPP */
-.whatsapp{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  background:#25D366;
-  padding:15px 18px;
-  border-radius:50px;
-  color:white;
-  font-size:18px;
-  text-decoration:none;
-  box-shadow:0 5px 15px rgba(0,0,0,0.3);
+/* TABLE */
+table{
+  width:100%;
+  margin-top:10px;
+  border-collapse:collapse;
+}
+
+td,th{
+  padding:10px;
+  border-bottom:1px solid #eee;
+}
+
+/* LIST */
+li{
+  background:#f9fafb;
+  padding:10px;
+  border-radius:8px;
+  margin:6px 0;
+  display:flex;
+  justify-content:space-between;
 }
 </style>
-
 </head>
+
 <body>
 
-<!-- NAV -->
-<nav>
-  <h2>MyBrand</h2>
-  <ul>
-    <li><a href="#home">Home</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#booking">Booking</a></li>
-  </ul>
-</nav>
+<!-- LOGIN -->
+<div id="loginSection">
+  <h2>Khan Honda Panel</h2>
+  <input id="password" type="password" placeholder="Enter Password">
+  <button onclick="login()">Login</button>
+</div>
 
-<!-- HERO -->
-<section class="hero" id="home">
-  <h1>Welcome to My Business</h1>
-  <p>Book your appointment instantly via WhatsApp</p>
-  <a class="btn" href="#booking">Book Now</a>
-</section>
+<!-- APP -->
+<div id="app">
 
-<!-- SERVICES -->
-<section id="services">
-  <h2>Our Services</h2>
-  <div class="services">
-    <div class="card">Haircut</div>
-    <div class="card">Beard Trim</div>
-    <div class="card">Facial</div>
-  </div>
-</section>
+<header>
+  <span id="menuBtn" onclick="openMenu()">☰</span>
+  <h3>Dashboard</h3>
+</header>
 
-<!-- BOOKING -->
-<section id="booking">
-  <h2>Book Appointment</h2>
+<div id="overlay" onclick="closeMenu()"></div>
 
-  <form onsubmit="sendWhatsApp(event)">
-    <input type="text" id="name" placeholder="Your Name" required>
-    
-    <select id="service">
-      <option value="Haircut">Haircut</option>
-      <option value="Beard Trim">Beard Trim</option>
-      <option value="Facial">Facial</option>
-    </select>
+<div id="sidebar">
+  <h3>Menu</h3>
+  <a onclick="showPage('inventory')">📦 Inventory</a>
+  <a onclick="showPage('clients')">👤 Clients</a>
+  <a onclick="showPage('bikes')">🏍 Bikes</a>
+  <a onclick="showPage('appointments')">📅 Appointments</a>
+  <a onclick="showPage('promotions')">🔥 Promotions</a>
+</div>
 
-    <input type="date" id="date" required>
+<!-- INVENTORY -->
+<div id="inventory" class="page">
+<div class="card">
+<h2>Inventory</h2>
+<input id="itemName" placeholder="Item">
+<input id="itemQty" placeholder="Qty">
+<button onclick="addItem()">Add</button>
+<table id="inventoryTable"></table>
+</div>
+</div>
 
-    <button type="submit">Send on WhatsApp</button>
-  </form>
-</section>
+<!-- CLIENTS -->
+<div id="clients" class="page">
+<div class="card">
+<h2>Clients</h2>
+<input id="clientName" placeholder="Name">
+<input id="service" placeholder="Service">
+<input id="bill" placeholder="Bill">
+<button onclick="addClient()">Add</button>
+<table id="clientTable"></table>
+</div>
+</div>
 
-<!-- WHATSAPP FLOAT -->
-<a class="whatsapp"
-   href="https://wa.me/923021046816"
-   target="_blank">
-   💬
-</a>
+<!-- BIKES -->
+<div id="bikes" class="page">
+<div class="card">
+<h2>Bikes</h2>
+<input id="bikeName" placeholder="Bike">
+<input id="bikePrice" placeholder="Price">
+<button onclick="addBike()">Add</button>
+<ul id="bikeList"></ul>
+</div>
+</div>
+
+<!-- APPOINTMENTS -->
+<div id="appointments" class="page">
+<div class="card">
+<h2>Appointments</h2>
+<input id="apptName" placeholder="Name">
+<input id="apptDate" type="date">
+<button onclick="bookAppt()">Add</button>
+<ul id="apptList"></ul>
+</div>
+</div>
+
+<!-- PROMOS -->
+<div id="promotions" class="page">
+<div class="card">
+<h2>Promotions</h2>
+<textarea id="promoText"></textarea>
+<button onclick="addPromo()">Add</button>
+<ul id="promoList"></ul>
+</div>
+</div>
+
+</div>
 
 <script>
-function sendWhatsApp(e){
-  e.preventDefault();
+const firebaseConfig = {
+ apiKey: "AIza...",
+ authDomain: "khan-honda-service-center.firebaseapp.com",
+ projectId: "khan-honda-service-center",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-  let name = document.getElementById("name").value;
-  let service = document.getElementById("service").value;
-  let date = document.getElementById("date").value;
+function login(){
+  if(password.value==="admin123"){
+    loginSection.style.display="none";
+    app.style.display="block";
+    showPage("inventory");
+    loadAll();
+  }
+}
 
-  let message = `Hi, my name is ${name}. I want to book ${service} on ${date}.`;
+function openMenu(){
+  sidebar.style.left="0";
+  overlay.style.display="block";
+}
 
-  let url = `https://wa.me/923021046816?text=${encodeURIComponent(message)}`;
+function closeMenu(){
+  sidebar.style.left="-270px";
+  overlay.style.display="none";
+}
 
-  window.open(url, "_blank");
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  closeMenu();
+}
+
+function loadAll(){
+  loadInventory();
+  loadClients();
+  loadBikes();
+  loadAppts();
+  loadPromos();
+}
+
+function addItem(){
+  db.collection("inventory").add({name:itemName.value,qty:itemQty.value});
+}
+
+function loadInventory(){
+  db.collection("inventory").onSnapshot(s=>{
+    inventoryTable.innerHTML="<tr><th>Item</th><th>Qty</th></tr>";
+    s.forEach(doc=>{
+      let d=doc.data();
+      inventoryTable.innerHTML+=`<tr><td>${d.name}</td><td>${d.qty}</td></tr>`;
+    });
+  });
+}
+
+function addClient(){
+  db.collection("clients").add({
+    name:clientName.value,service:service.value,bill:bill.value
+  });
+}
+
+function loadClients(){
+  db.collection("clients").onSnapshot(s=>{
+    clientTable.innerHTML="";
+    s.forEach(doc=>{
+      let d=doc.data();
+      clientTable.innerHTML+=`<tr><td>${d.name}</td><td>${d.service}</td><td>${d.bill}</td></tr>`;
+    });
+  });
+}
+
+function addBike(){
+  db.collection("bikes").add({name:bikeName.value,price:bikePrice.value});
+}
+
+function loadBikes(){
+  db.collection("bikes").onSnapshot(s=>{
+    bikeList.innerHTML="";
+    s.forEach(doc=>{
+      let d=doc.data();
+      bikeList.innerHTML+=`<li>${d.name} - ${d.price}</li>`;
+    });
+  });
+}
+
+function bookAppt(){
+  db.collection("appointments").add({name:apptName.value,date:apptDate.value});
+}
+
+function loadAppts(){
+  db.collection("appointments").onSnapshot(s=>{
+    apptList.innerHTML="";
+    s.forEach(doc=>{
+      let d=doc.data();
+      apptList.innerHTML+=`<li>${d.name} - ${d.date}</li>`;
+    });
+  });
+}
+
+function addPromo(){
+  db.collection("promotions").add({text:promoText.value});
+}
+
+function loadPromos(){
+  db.collection("promotions").onSnapshot(s=>{
+    promoList.innerHTML="";
+    s.forEach(doc=>{
+      let d=doc.data();
+      promoList.innerHTML+=`<li>${d.text}</li>`;
+    });
+  });
 }
 </script>
 
