@@ -12,10 +12,7 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:Poppins;
-  background:#eef2f7;
-}
+body{font-family:Poppins;background:#eef2f7}
 
 /* LOGIN */
 #loginSection{
@@ -25,21 +22,13 @@ body{
   justify-content:center;
   height:100vh;
 }
-
 #loginSection input{
-  padding:12px;
-  width:250px;
-  margin:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
+  padding:12px;width:250px;margin:10px;
+  border-radius:8px;border:1px solid #ccc;
 }
-
 #loginSection button{
-  padding:12px 20px;
-  background:#2563eb;
-  color:white;
-  border:none;
-  border-radius:8px;
+  padding:12px 20px;background:#2563eb;
+  color:white;border:none;border-radius:8px;
 }
 
 /* APP */
@@ -47,123 +36,78 @@ body{
 
 /* HEADER */
 header{
-  background:#111827;
-  color:white;
-  padding:15px;
-  display:flex;
-  align-items:center;
-  gap:15px;
-  position:sticky;
-  top:0;
+  background:#111827;color:white;
+  padding:15px;display:flex;
+  align-items:center;gap:15px;
+  position:sticky;top:0;
 }
-
-#menuBtn{
-  font-size:22px;
-  cursor:pointer;
-}
+#menuBtn{font-size:22px;cursor:pointer}
 
 /* SIDEBAR */
 #sidebar{
-  position:fixed;
-  top:0;
-  left:-270px;
-  width:260px;
-  height:100%;
-  background:#ffffff;
+  position:fixed;top:0;left:-270px;
+  width:260px;height:100%;
+  background:#fff;
   box-shadow:4px 0 25px rgba(0,0,0,0.15);
-  transition:0.35s ease;
+  transition:0.35s;
   z-index:1000;
   padding-top:20px;
 }
-
-#sidebar h3{
-  padding:20px;
-  font-weight:600;
-}
-
+#sidebar h3{padding:20px}
 #sidebar a{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:14px 20px;
-  cursor:pointer;
-  color:#111;
-  font-size:15px;
+  display:flex;gap:10px;
+  padding:14px 20px;cursor:pointer;
 }
-
-#sidebar a:hover{
-  background:#f3f4f6;
-}
+#sidebar a:hover{background:#f3f4f6}
 
 /* OVERLAY */
 #overlay{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  backdrop-filter:blur(3px);
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
   background:rgba(0,0,0,0.3);
-  display:none;
-  z-index:999;
+  display:none;z-index:999;
 }
 
 /* PAGE */
-.page{
-  display:none;
-  padding:20px;
-}
-
-.active{
-  display:block;
-}
+.page{display:none;padding:20px}
+.active{display:block}
 
 /* CARD */
 .card{
-  background:white;
-  padding:20px;
+  background:white;padding:20px;
   border-radius:14px;
   box-shadow:0 10px 25px rgba(0,0,0,0.05);
-  margin-bottom:20px;
 }
 
 /* INPUTS */
 input,textarea{
-  padding:10px;
-  margin:5px;
-  border-radius:8px;
-  border:1px solid #ccc;
+  padding:10px;margin:5px;
+  border-radius:8px;border:1px solid #ccc;
 }
-
 button{
   padding:10px 14px;
-  border:none;
-  background:#2563eb;
-  color:white;
-  border-radius:8px;
+  border:none;background:#2563eb;
+  color:white;border-radius:8px;
   cursor:pointer;
 }
 
-/* TABLE */
-table{
-  width:100%;
-  margin-top:10px;
-  border-collapse:collapse;
-}
-
-td,th{
-  padding:10px;
-  border-bottom:1px solid #eee;
-}
-
-/* LIST */
-li{
+/* CLIENT CRM */
+#clientCard{
+  display:none;
   background:#f9fafb;
-  padding:10px;
+  padding:15px;
+  border-radius:12px;
+  margin-top:10px;
+}
+
+#historyList li{
+  background:#fff;
+  padding:8px;
+  margin:5px 0;
   border-radius:8px;
-  margin:6px 0;
   display:flex;
   justify-content:space-between;
+  font-size:13px;
 }
 </style>
 </head>
@@ -207,15 +151,42 @@ li{
 </div>
 </div>
 
-<!-- CLIENTS -->
+<!-- CLIENTS (CRM UPGRADED) -->
 <div id="clients" class="page">
 <div class="card">
-<h2>Clients</h2>
+
+<h2>👤 Client CRM</h2>
+
+<!-- SEARCH -->
+<input id="searchPhone" placeholder="Search phone">
+<button onclick="searchClient()">Search</button>
+
+<hr>
+
+<!-- ADD CLIENT -->
 <input id="clientName" placeholder="Name">
-<input id="service" placeholder="Service">
-<input id="bill" placeholder="Bill">
-<button onclick="addClient()">Add</button>
-<table id="clientTable"></table>
+<input id="clientPhone" placeholder="Phone">
+<input id="clientBike" placeholder="Bike">
+<button onclick="saveClient()">Save Client</button>
+
+<!-- PROFILE -->
+<div id="clientCard">
+
+<h3 id="cName"></h3>
+<p>📞 <span id="cPhone"></span></p>
+<p>🏍 <span id="cBike"></span></p>
+
+<hr>
+
+<h4>Service History</h4>
+<ul id="historyList"></ul>
+
+<input id="serviceType" placeholder="Service">
+<input id="serviceBill" placeholder="Bill">
+<button onclick="addService()">Add Service</button>
+
+</div>
+
 </div>
 </div>
 
@@ -259,9 +230,13 @@ const firebaseConfig = {
  authDomain: "khan-honda-service-center.firebaseapp.com",
  projectId: "khan-honda-service-center",
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+let currentPhone = null;
+
+/* LOGIN */
 function login(){
   if(password.value==="admin123"){
     loginSection.style.display="none";
@@ -271,15 +246,9 @@ function login(){
   }
 }
 
-function openMenu(){
-  sidebar.style.left="0";
-  overlay.style.display="block";
-}
-
-function closeMenu(){
-  sidebar.style.left="-270px";
-  overlay.style.display="none";
-}
+/* MENU */
+function openMenu(){sidebar.style.left="0";overlay.style.display="block";}
+function closeMenu(){sidebar.style.left="-270px";overlay.style.display="none";}
 
 function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -287,16 +256,12 @@ function showPage(id){
   closeMenu();
 }
 
-function loadAll(){
-  loadInventory();
-  loadClients();
-  loadBikes();
-  loadAppts();
-  loadPromos();
-}
-
+/* INVENTORY */
 function addItem(){
-  db.collection("inventory").add({name:itemName.value,qty:itemQty.value});
+  db.collection("inventory").add({
+    name:itemName.value,
+    qty:itemQty.value
+  });
 }
 
 function loadInventory(){
@@ -309,62 +274,99 @@ function loadInventory(){
   });
 }
 
-function addClient(){
-  db.collection("clients").add({
-    name:clientName.value,service:service.value,bill:bill.value
+/* CLIENT CRM */
+function saveClient(){
+  const phone = clientPhone.value;
+
+  db.collection("clients").doc(phone).set({
+    name:clientName.value,
+    phone:phone,
+    bike:clientBike.value
+  });
+
+  alert("Client saved");
+}
+
+function searchClient(){
+  const phone = searchPhone.value;
+  currentPhone = phone;
+
+  db.collection("clients").doc(phone).get().then(doc=>{
+    if(!doc.exists){alert("Not found");return;}
+
+    let d = doc.data();
+
+    clientCard.style.display="block";
+    cName.innerText=d.name;
+    cPhone.innerText=d.phone;
+    cBike.innerText=d.bike;
+
+    loadHistory(phone);
   });
 }
 
-function loadClients(){
-  db.collection("clients").onSnapshot(s=>{
-    clientTable.innerHTML="";
+function addService(){
+  db.collection("clients")
+  .doc(currentPhone)
+  .collection("services")
+  .add({
+    type:serviceType.value,
+    bill:serviceBill.value,
+    date:new Date().toISOString().split("T")[0]
+  });
+
+  serviceType.value="";
+  serviceBill.value="";
+
+  loadHistory(currentPhone);
+}
+
+function loadHistory(phone){
+  db.collection("clients")
+  .doc(phone)
+  .collection("services")
+  .orderBy("date","desc")
+  .get()
+  .then(s=>{
+    historyList.innerHTML="";
     s.forEach(doc=>{
       let d=doc.data();
-      clientTable.innerHTML+=`<tr><td>${d.name}</td><td>${d.service}</td><td>${d.bill}</td></tr>`;
+      historyList.innerHTML+=`
+      <li>
+        <span>${d.type}</span>
+        <span>${d.bill}</span>
+        <span>${d.date}</span>
+      </li>`;
     });
   });
 }
 
+/* BIKES */
 function addBike(){
-  db.collection("bikes").add({name:bikeName.value,price:bikePrice.value});
-}
-
-function loadBikes(){
-  db.collection("bikes").onSnapshot(s=>{
-    bikeList.innerHTML="";
-    s.forEach(doc=>{
-      let d=doc.data();
-      bikeList.innerHTML+=`<li>${d.name} - ${d.price}</li>`;
-    });
+  db.collection("bikes").add({
+    name:bikeName.value,
+    price:bikePrice.value
   });
 }
 
+/* APPOINTMENTS */
 function bookAppt(){
-  db.collection("appointments").add({name:apptName.value,date:apptDate.value});
-}
-
-function loadAppts(){
-  db.collection("appointments").onSnapshot(s=>{
-    apptList.innerHTML="";
-    s.forEach(doc=>{
-      let d=doc.data();
-      apptList.innerHTML+=`<li>${d.name} - ${d.date}</li>`;
-    });
+  db.collection("appointments").add({
+    name:apptName.value,
+    date:apptDate.value
   });
 }
 
+/* PROMOS */
 function addPromo(){
-  db.collection("promotions").add({text:promoText.value});
+  db.collection("promotions").add({
+    text:promoText.value
+  });
 }
 
-function loadPromos(){
-  db.collection("promotions").onSnapshot(s=>{
-    promoList.innerHTML="";
-    s.forEach(doc=>{
-      let d=doc.data();
-      promoList.innerHTML+=`<li>${d.text}</li>`;
-    });
-  });
+/* LOAD ALL */
+function loadAll(){
+  loadInventory();
 }
 </script>
 
