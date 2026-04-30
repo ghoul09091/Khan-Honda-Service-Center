@@ -16,20 +16,13 @@ body{font-family:Poppins;background:#eef2f7}
 
 /* LOGIN */
 #loginSection{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;
 }
 #loginSection input{
-  padding:12px;width:250px;margin:10px;
-  border-radius:8px;border:1px solid #ccc;
+  padding:12px;width:250px;margin:10px;border-radius:8px;border:1px solid #ccc;
 }
 #loginSection button{
-  padding:12px 20px;background:#2563eb;
-  color:white;border:none;border-radius:8px;
-  cursor:pointer;
+  padding:12px 20px;background:#2563eb;color:white;border:none;border-radius:8px;cursor:pointer;
 }
 
 /* APP */
@@ -37,36 +30,24 @@ body{font-family:Poppins;background:#eef2f7}
 
 /* HEADER */
 header{
-  background:#111827;color:white;
-  padding:15px;display:flex;
-  align-items:center;gap:15px;
+  background:#111827;color:white;padding:15px;display:flex;align-items:center;gap:15px;
   position:sticky;top:0;
 }
 #menuBtn{font-size:22px;cursor:pointer}
 
 /* SIDEBAR */
 #sidebar{
-  position:fixed;top:0;left:-270px;
-  width:260px;height:100%;
-  background:#fff;
-  box-shadow:4px 0 25px rgba(0,0,0,0.15);
-  transition:0.35s;
-  z-index:1000;
-  padding-top:20px;
+  position:fixed;top:0;left:-270px;width:260px;height:100%;background:#fff;
+  box-shadow:4px 0 25px rgba(0,0,0,0.15);transition:0.35s;z-index:1000;padding-top:20px;
 }
 #sidebar h3{padding:20px}
-#sidebar a{
-  display:flex;gap:10px;
-  padding:14px 20px;cursor:pointer;
-}
+#sidebar a{display:flex;gap:10px;padding:14px 20px;cursor:pointer;}
 #sidebar a:hover{background:#f3f4f6}
 
 /* OVERLAY */
 #overlay{
-  position:fixed;top:0;left:0;
-  width:100%;height:100%;
-  background:rgba(0,0,0,0.3);
-  display:none;z-index:999;
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.3);display:none;z-index:999;
 }
 
 /* PAGE */
@@ -75,41 +56,21 @@ header{
 
 /* CARD */
 .card{
-  background:white;padding:20px;
-  border-radius:14px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+  background:white;padding:20px;border-radius:14px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);margin-bottom:20px;
 }
 
 /* INPUTS */
 input,textarea{
-  padding:10px;margin:5px;
-  border-radius:8px;border:1px solid #ccc;
+  padding:10px;margin:5px;border-radius:8px;border:1px solid #ccc;
 }
 button{
-  padding:10px 14px;
-  border:none;background:#2563eb;
-  color:white;border-radius:8px;
-  cursor:pointer;
+  padding:10px 14px;border:none;background:#2563eb;color:white;border-radius:8px;cursor:pointer;
 }
 
-/* CLIENT CRM */
-#clientCard{
-  display:none;
-  background:#f9fafb;
-  padding:15px;
-  border-radius:12px;
-  margin-top:10px;
-}
-
-#historyList li{
-  background:#fff;
-  padding:8px;
-  margin:5px 0;
-  border-radius:8px;
-  display:flex;
-  justify-content:space-between;
-  font-size:13px;
-}
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin-top:10px;}
+th,td{border:1px solid #ddd;padding:8px;text-align:left}
 
 /* LOGIN FEEDBACK */
 #errorMsg{color:red;margin-top:5px;font-weight:bold;}
@@ -128,6 +89,7 @@ button{
 
 <!-- APP -->
 <div id="app">
+
 <header>
   <span id="menuBtn" onclick="openMenu()">☰</span>
   <h3>Dashboard</h3>
@@ -145,14 +107,81 @@ button{
   <a onclick="showPage('billing')">💰 Billing</a>
 </div>
 
-<!-- (Pages here: inventory, clients, bikes, appointments, promotions, billing) -->
-<!-- For brevity, the page code remains the same as in your current HTML -->
+<!-- INVENTORY -->
+<div id="inventory" class="page">
+  <div class="card">
+    <h3>Add Item</h3>
+    <input id="itemName" placeholder="Item Name">
+    <input id="itemQty" type="number" placeholder="Quantity">
+    <button onclick="addItem()">Add</button>
+  </div>
+
+  <div class="card">
+    <h3>Inventory List</h3>
+    <table id="inventoryTable">
+      <tr><th>Item</th><th>Qty</th></tr>
+    </table>
+  </div>
+</div>
+
+<!-- CLIENTS (placeholder) -->
+<div id="clients" class="page">
+  <div class="card"><h3>Clients Module (Coming Soon)</h3></div>
+</div>
+
+<!-- BIKES -->
+<div id="bikes" class="page">
+  <div class="card"><h3>Bikes Module (Coming Soon)</h3></div>
+</div>
+
+<!-- APPOINTMENTS -->
+<div id="appointments" class="page">
+  <div class="card"><h3>Appointments Module (Coming Soon)</h3></div>
+</div>
+
+<!-- PROMOTIONS -->
+<div id="promotions" class="page">
+  <div class="card"><h3>Promotions Module (Coming Soon)</h3></div>
+</div>
+
+<!-- BILLING -->
+<div id="billing" class="page">
+  <div class="card">
+    <h3>Load Client</h3>
+    <input id="billClientPhone" placeholder="Client Phone">
+    <button onclick="loadBillingClient()">Load</button>
+
+    <div id="billingClientInfo" style="display:none">
+      <p>Name: <span id="billClientName"></span></p>
+      <p>Bike: <span id="billClientBike"></span></p>
+      <p>Address: <span id="billClientAddress"></span></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Services</h3>
+    <table id="servicesTable">
+      <tr><th>Service</th><th>Price</th><th>Action</th></tr>
+    </table>
+    <button onclick="addServiceRow()">Add Service</button>
+  </div>
+
+  <div class="card">
+    <input id="discount" type="number" placeholder="Discount" oninput="updateTotals()">
+    <p>Subtotal: <span id="subtotal">0</span></p>
+    <p>Tax: <span id="tax">0</span></p>
+    <p>Total: <span id="total">0</span></p>
+
+    <button onclick="saveInvoice()">Save Invoice</button>
+    <button onclick="printInvoice()">Print</button>
+  </div>
+</div>
 
 </div>
 
 <script>
 const firebaseConfig = {
- apiKey: "AIza...",
+ apiKey: "YOUR_API_KEY",
  authDomain: "khan-honda-service-center.firebaseapp.com",
  projectId: "khan-honda-service-center",
 };
@@ -160,7 +189,18 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ELEMENTS FOR BILLING */
+/* ELEMENTS */
+const password = document.getElementById("password");
+const loginSection = document.getElementById("loginSection");
+const app = document.getElementById("app");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+
+const inventoryTable = document.getElementById('inventoryTable');
+const itemName = document.getElementById('itemName');
+const itemQty = document.getElementById('itemQty');
+
+/* BILLING */
 const subtotalElem = document.getElementById('subtotal');
 const taxElem = document.getElementById('tax');
 const totalElem = document.getElementById('total');
@@ -172,7 +212,6 @@ const billingClientInfo = document.getElementById('billingClientInfo');
 const servicesTable = document.getElementById('servicesTable');
 const billClientPhoneInput = document.getElementById('billClientPhone');
 
-let currentPhone = null;
 let billingClientPhone = null;
 
 /* LOGIN */
@@ -181,9 +220,9 @@ function login(){
     loginSection.style.display="none";
     app.style.display="block";
     showPage("inventory");
-    loadAll();
+    loadInventory();
   } else {
-    document.getElementById('errorMsg').innerText = "Incorrect Password!";
+    errorMsg.innerText="Incorrect Password!";
   }
 }
 
@@ -198,7 +237,14 @@ function showPage(id){
 }
 
 /* INVENTORY */
-function addItem(){ db.collection("inventory").add({ name:itemName.value, qty:itemQty.value }); }
+function addItem(){
+  db.collection("inventory").add({
+    name:itemName.value,
+    qty:parseInt(itemQty.value)||0
+  });
+  itemName.value=""; itemQty.value="";
+}
+
 function loadInventory(){
   db.collection("inventory").onSnapshot(s=>{
     inventoryTable.innerHTML="<tr><th>Item</th><th>Qty</th></tr>";
@@ -209,51 +255,63 @@ function loadInventory(){
   });
 }
 
-/* LOAD ALL */
-function loadAll(){ loadInventory(); }
-
-// BILLING FUNCTIONS
-function loadBillingClient() {
-  const phone = billClientPhoneInput.value;
-  billingClientPhone = phone;
-  db.collection("clients").doc(phone).get().then(doc => {
-    if(!doc.exists){ alert("Client not found"); return; }
-    let d = doc.data();
-    billingClientName.innerText = d.name;
-    billingClientBike.innerText = d.bike;
-    billingClientAddress.innerText = d.address || "-";
-    billingClientInfo.style.display = "block";
+/* BILLING */
+function loadBillingClient(){
+  const phone=billClientPhoneInput.value;
+  billingClientPhone=phone;
+  db.collection("clients").doc(phone).get().then(doc=>{
+    if(!doc.exists){alert("Client not found");return;}
+    let d=doc.data();
+    billingClientName.innerText=d.name;
+    billingClientBike.innerText=d.bike;
+    billingClientAddress.innerText=d.address||"-";
+    billingClientInfo.style.display="block";
   });
 }
 
-function addServiceRow(service='', price='') {
-  const row = servicesTable.insertRow();
-  row.innerHTML = `
-    <td><input type="text" class="serviceType" value="${service}"></td>
-    <td><input type="number" class="servicePrice" value="${price}" oninput="updateTotals()"></td>
-    <td><button onclick="removeServiceRow(this)">❌</button></td>
-  `;
+function addServiceRow(){
+  const row=servicesTable.insertRow();
+  row.innerHTML=`
+    <td><input class="serviceType"></td>
+    <td><input type="number" class="servicePrice" oninput="updateTotals()"></td>
+    <td><button onclick="removeServiceRow(this)">❌</button></td>`;
+}
+
+function removeServiceRow(btn){
+  btn.closest('tr').remove();
   updateTotals();
 }
 
-function removeServiceRow(btn){ btn.closest('tr').remove(); updateTotals(); }
-
-function updateTotals() {
-  let subtotal = 0;
-  document.querySelectorAll('.servicePrice').forEach(p => subtotal += parseFloat(p.value)||0);
-  let tax = subtotal * 0.05;
-  let discountVal = parseFloat(discount.value)||0;
-  let total = subtotal + tax - discountVal;
-  subtotalElem.innerText = subtotal.toFixed(2);
-  taxElem.innerText = tax.toFixed(2);
-  totalElem.innerText = total.toFixed(2);
+function updateTotals(){
+  let subtotal=0;
+  document.querySelectorAll('.servicePrice').forEach(p=>subtotal+=parseFloat(p.value)||0);
+  let tax=subtotal*0.05;
+  let disc=parseFloat(discount.value)||0;
+  let total=subtotal+tax-disc;
+  subtotalElem.innerText=subtotal.toFixed(2);
+  taxElem.innerText=tax.toFixed(2);
+  totalElem.innerText=total.toFixed(2);
 }
 
 function saveInvoice(){
-  if(!billingClientPhone){ alert("Load client first"); return; }
-  const services = [];
+  if(!billingClientPhone){alert("Load client first");return;}
+  let services=[];
   document.querySelectorAll('#servicesTable tr').forEach((tr,i)=>{
-    if(i===0) return;
-    const type = tr.querySelector('.serviceType').value;
-    const price = parseFloat(tr.querySelector('.servicePrice').value)||0;
-    if(type)
+    if(i===0)return;
+    let type=tr.querySelector('.serviceType').value;
+    let price=parseFloat(tr.querySelector('.servicePrice').value)||0;
+    if(type) services.push({type,price});
+  });
+  db.collection("invoices").add({
+    clientPhone:billingClientPhone,
+    services,
+    total:totalElem.innerText,
+    date:new Date()
+  }).then(()=>alert("Saved"));
+}
+
+function printInvoice(){ window.print(); }
+</script>
+
+</body>
+</html>
