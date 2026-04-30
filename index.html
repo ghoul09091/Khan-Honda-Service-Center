@@ -266,54 +266,124 @@ closeMenu();
 }
 
 /* CRM */
-let currentClient=null;
+let currentClient = null;
+let invoiceItems = [];
 
 function searchClient(){
-let num=searchNumber.value;
-if(num.length!==11){alert("Enter 11 digit number");return;}
+  let num = searchNumber.value;
 
-db.collection("clients").doc(num).get().then(doc=>{
-if(doc.exists){
-currentClient=doc.data();
-openBilling();
-}else{
-notFoundPopup.style.display="block";
-}
-});
+  if(num.length !== 11){
+    alert("Enter 11 digit number");
+    return;
+  }
+
+  db.collection("clients").doc(num).get().then(doc => {
+    if(doc.exists){
+      currentClient = doc.data();
+      openBilling();
+    } else {
+      notFoundPopup.style.display = "block";
+    }
+  });
 }
 
 function continueWithout(){
-notFoundPopup.style.display="none";
-currentClient={name:"Walk-in",phone:searchNumber.value};
-openBilling();
+  notFoundPopup.style.display = "none";
+
+  currentClient = {
+    name: "Walk-in Client",
+    phone: searchNumber.value
+  };
+
+  // auto-create client in DB
+  db.collection("clients").doc(searchNumber.value).set(currentClient);
+
+  openBilling();
 }
 
 function openBilling(){
-billingBox.style.display="block";
-clientDisplay.innerText=(currentClient.name||"")+" | "+(currentClient.phone||"");
+  billingBox.style.display = "block";
+
+  clientDisplay.innerText =
+    (currentClient.name || "") + " | " + (currentClient.phone || "");
+
+  // reset table
+  serviceTable.innerHTML =
+    `<tr><th>Service</th><th>Price</th><th>Action</th></tr>`;
+
+  invoiceItems = [];
+  addRow();
+  calc();
 }
 
-/* SERVICES */
+/* ADD ROW */
 function addRow(){
-let row=serviceTable.insertRow();
-row.innerHTML=`<td><input class="service"></td><td><input type="number" class="price" oninput="calc()"></td>`;
+  let row = serviceTable.insertRow();
+
+  row.innerHTML = `
+    <td><input class="service" placeholder="Oil change / Brake etc"></td>
+    <td><input type="number" class="price" oninput="calc()"></td>
+    <td><button onclick="deleteRow(this)">❌</button></td>
+  `;
 }
 
+/* DELETE ROW */
+function deleteRow(btn){
+  btn.parentElement.parentElement.remove();
+  calc();
+}
+
+/* CALCULATE TOTAL */
 function calc(){
-let t=0;
-document.querySelectorAll(".price").forEach(p=>t+=parseFloat(p.value)||0);
-total.innerText=t;
+  let totalValue = 0;
+
+  document.querySelectorAll(".price").forEach(p => {
+    totalValue += parseFloat(p.value) || 0;
+  });
+
+  total.innerText = totalValue;
 }
 
-/* SAVE */
+/* SAVE INVOICE (UPGRADED) */
 function saveInvoice(){
-let services=[];
-document.querySelectorAll("#serviceTable tr").forEach((tr,i)=>{
-if(i===0)return;
-let s=tr.querySelector(".service").value;
-let p=tr.querySelector(".price").value;
-if(s)services.push({s,p});
-});
+
+  let services = [];
+  let valid = false;
+
+  document.querySelectorAll("#serviceTable tr").forEach((tr, i) => {
+    if(i === 0) return;
+
+    let s = tr.querySelector(".service").value;
+    let p = tr.querySelector(".price").value;
+
+    if(s && p){
+      services.push({ service: s, price: parseFloat(p) });
+      valid = true;
+    }
+  });
+
+  if(!valid){
+    alert("Add at least one service");
+    return;
+  }
+
+  let invoiceId = "KH-" + Date.now();
+
+  db.collection("invoices").doc(invoiceId).set({
+    invoiceId,
+    client: currentClient,
+    services,
+    total: parseFloat(total.innerText),
+    status: "Pending",
+    date: new Date().toISOString()
+  }).then(() => {
+    alert("Invoice Saved Successfully!");
+
+    // reset UI
+    billingBox.style.display = "none";
+    searchNumber.value = "";
+  });
+}
 
 db.collection("invoices").add({
 client:currentClient,
