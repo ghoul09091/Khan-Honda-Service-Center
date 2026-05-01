@@ -8,136 +8,120 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
 body{
-  font-family:Poppins;
-  background: linear-gradient(180deg, #ffffff, #f1f5f9);
+font-family:Arial;
+margin:0;
+background:#f5f5f5;
 }
 
-/* LOGIN FULLSCREEN */
+/* LOGIN */
 #loginSection{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: linear-gradient(135deg,#0f172a,#1e293b);
-  z-index:9999;
+position:fixed;
+width:100%;
+height:100vh;
+background:#111;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
-/* SHAKE */
-#loginSection.shake{
-  animation: shake 0.4s;
-}
-
-@keyframes shake{
-  0%{transform:translateX(0)}
-  20%{transform:translateX(-10px)}
-  40%{transform:translateX(10px)}
-  60%{transform:translateX(-10px)}
-  80%{transform:translateX(10px)}
-  100%{transform:translateX(0)}
-}
-
-/* LOGIN BOX */
 .loginBox{
-  width:320px;
-  padding:30px;
-  border-radius:18px;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-  text-align:center;
-  color:white;
+background:white;
+padding:30px;
+border-radius:10px;
+width:300px;
+text-align:center;
 }
 
-.loginBox input{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.1);
-  color:white;
-  outline:none;
-}
-
-.loginBox button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:10px;
-  background: linear-gradient(90deg,#2563eb,#1d4ed8);
-  color:white;
-  font-weight:600;
-  cursor:pointer;
-}
-
-#errorMsg{
-  color:#ff4d4d;
-  margin-top:10px;
-  font-size:14px;
-}
-
-/* APP */
-#app{
-  display:none;
-  min-height:100vh;
-}
-
-header{
-background:#111827;color:white;padding:15px;display:flex;gap:15px;position:sticky;top:0;
-}
-
-#menuBtn{font-size:22px;cursor:pointer}
-
-#sidebar{
-position:fixed;top:0;left:-270px;width:260px;height:100%;
-background:#fff;box-shadow:4px 0 25px rgba(0,0,0,0.15);
-transition:0.35s;z-index:1000;padding-top:20px;
-}
-
-#sidebar a{display:block;padding:14px 20px;cursor:pointer;}
-#sidebar a:hover{background:#f3f4f6}
-
-#overlay{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.3);display:none;z-index:999;
-}
-
-.page{display:none;padding:20px}
-.page.active{display:block}
-
-.card{
-background:white;padding:20px;border-radius:14px;
-box-shadow:0 10px 25px rgba(0,0,0,0.05);margin-bottom:20px;
-}
-
-input,textarea{
-padding:10px;margin:5px;width:100%;border-radius:8px;border:1px solid #ccc;
+input,select{
+width:100%;
+padding:10px;
+margin:5px 0;
 }
 
 button{
-padding:10px;border:none;background:#2563eb;color:white;border-radius:8px;cursor:pointer;margin-top:5px;
+padding:10px;
+border:none;
+background:#e11d48;
+color:white;
+cursor:pointer;
 }
 
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border:1px solid #ddd;padding:8px}
+/* APP */
+#app{display:none}
+
+header{
+background:#111;
+color:white;
+padding:15px;
+display:flex;
+gap:15px;
+}
+
+#sidebar{
+position:fixed;
+left:-250px;
+top:0;
+width:250px;
+height:100%;
+background:white;
+transition:0.3s;
+}
+
+#sidebar a{
+display:block;
+padding:15px;
+cursor:pointer;
+}
+
+.page{
+display:none;
+padding:20px;
+}
+
+.page.active{
+display:block;
+}
+
+.card{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+}
+
+/* WATERMARK */
+.page::before{
+content:"HONDA";
+position:fixed;
+font-size:120px;
+color:rgba(255,0,0,0.05);
+top:40%;
+left:50%;
+transform:translate(-50%,-50%);
+z-index:-1;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+border:1px solid #ddd;
+padding:8px;
+}
 
 .popup{
-position:fixed;top:50%;left:50%;
+position:fixed;
+top:50%;
+left:50%;
 transform:translate(-50%,-50%);
-background:white;padding:20px;border-radius:12px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-display:none;z-index:2000;
+background:white;
+padding:20px;
+display:none;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
 </style>
 </head>
@@ -146,214 +130,216 @@ display:none;z-index:2000;
 
 <!-- LOGIN -->
 <div id="loginSection">
-  <div class="loginBox">
-    <h2>Khan Honda Panel</h2>
-    <input id="password" type="password" placeholder="Enter Password">
-    <button onclick="login()">Login</button>
-    <p id="errorMsg"></p>
-  </div>
+<div class="loginBox">
+<h2>Login</h2>
+<input id="password" type="password">
+<button onclick="login()">Login</button>
+<p id="errorMsg"></p>
+</div>
 </div>
 
 <!-- APP -->
 <div id="app">
 
 <header>
-<span id="menuBtn" onclick="openMenu()">☰</span>
-<h3>Dashboard</h3>
+<button onclick="toggleMenu()">☰</button>
+<h3>Khan Honda System</h3>
 </header>
 
-<div id="overlay" onclick="closeMenu()"></div>
-
 <div id="sidebar">
-<a onclick="showPage('billingCRM')">💰 Billing / CRM</a>
-<a onclick="showPage('inventory')">📦 Inventory</a>
-<a onclick="showPage('appointments')">📅 Appointments</a>
-<a onclick="showPage('bikes')">🏍 Bikes</a>
-<a onclick="showPage('promotions')">🔥 Promotions</a>
+<a onclick="showPage('billing')">Billing / CRM</a>
+<a onclick="showPage('inventory')">Inventory</a>
+<a onclick="showPage('appointments')">Appointments</a>
+<a onclick="showPage('bikes')">Bikes</a>
+<a onclick="showPage('promotions')">Promotions</a>
 </div>
 
-<div id="billingCRM" class="page active">
+<!-- BILLING PAGE -->
+<div id="billing" class="page active">
+
 <div class="card">
 <h3>Search Client</h3>
-<input id="searchNumber" type="tel" maxlength="11" inputmode="numeric">
+<input id="phoneSearch">
 <button onclick="searchClient()">Search</button>
 </div>
 
-<div class="card" id="billingBox" style="display:none">
-<h3>Client Info</h3>
-<p id="clientDisplay"></p>
+<div class="card">
+<h3>Search Bill</h3>
+<input id="billSearch">
+<button onclick="searchBill()">Search</button>
+</div>
 
-<table id="serviceTable">
-<tr><th>Service</th><th>Price</th></tr>
+<div id="historyBox" class="card" style="display:none">
+<h3>History</h3>
+<table id="historyTable"></table>
+</div>
+
+<div id="billingBox" class="card" style="display:none">
+<h3 id="clientTitle"></h3>
+
+<table id="billingTable">
+<tr><th>Service</th><th>Qty</th><th>Price</th><th></th></tr>
 </table>
 
-<button onclick="addRow()">➕ Add Service</button>
+<button onclick="addRow()">Add Row</button>
+<h3>Total: <span id="total">0</span></h3>
 
-<p><b>Total:</b> <span id="total">0</span></p>
-<button onclick="saveInvoice()">Save Invoice</button>
-</div>
-</div>
-
+<button onclick="saveBill()">Save</button>
+<button onclick="printInvoice()">Print</button>
 </div>
 
-<div id="notFoundPopup" class="popup">
-<p>Client not found</p>
-<button onclick="continueWithout()">Continue Without Saving</button>
+</div>
+
+<!-- OTHER PAGES -->
+<div id="inventory" class="page"><div class="card">Inventory Page</div></div>
+<div id="appointments" class="page"><div class="card">Appointments Page</div></div>
+<div id="bikes" class="page"><div class="card">Bikes Page</div></div>
+<div id="promotions" class="page"><div class="card">Promotions Page</div></div>
+
+<!-- POPUP -->
+<div id="popup" class="popup">
+<h3>Client not found</h3>
+<button onclick="newClient()">Add New</button>
+<button onclick="walkIn()">Walk-in</button>
 </div>
 
 <script>
-const firebaseConfig = {
-apiKey: "YOUR_API_KEY",
-authDomain: "khan-honda-service-center.firebaseapp.com",
-projectId: "khan-honda-service-center"
+const firebaseConfig={
+apiKey:"YOUR_API_KEY",
+authDomain:"khan-honda-service-center.firebaseapp.com",
+projectId:"khan-honda-service-center"
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const db=firebase.firestore();
 
-/* ✅ ONLY FIXED LOGIN */
+/* LOGIN */
 function login(){
-
-const error = document.getElementById("errorMsg");
-const password = document.getElementById("password");
-const loginSection = document.getElementById("loginSection");
-const app = document.getElementById("app");
-
-if(password.value === "admin123"){
-
-loginSection.style.display = "none";
-app.style.display = "block";
-
-showPage("billingCRM");
-
-} else {
-
-error.innerText = "Invalid Password";
-
-loginSection.classList.remove("shake");
-void loginSection.offsetWidth;
-loginSection.classList.add("shake");
+if(password.value==="admin123"){
+loginSection.style.display="none";
+app.style.display="block";
+}else{
+errorMsg.innerText="Wrong password";
 }
 }
 
 /* MENU */
-function openMenu(){sidebar.style.left="0";overlay.style.display="block";}
-function closeMenu(){sidebar.style.left="-270px";overlay.style.display="none";}
+function toggleMenu(){
+sidebar.style.left = sidebar.style.left==="0px" ? "-250px":"0px";
+}
 
-/* PAGE SYSTEM */
+/* PAGE SWITCH */
 function showPage(id){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
-closeMenu();
 }
 
-/* CRM (UNCHANGED) */
-let currentClient = null;
+/* BILLING LOGIC (same advanced system) */
+
+let currentClient=null;
 
 function searchClient(){
-let num = searchNumber.value;
-
-if(num.length !== 11){
-alert("Enter 11 digit number");
-return;
-}
+let num=phoneSearch.value;
 
 db.collection("clients").doc(num).get().then(doc=>{
 if(doc.exists){
-currentClient = doc.data();
+currentClient=doc.data();
+loadHistory(num);
 openBilling();
 }else{
-notFoundPopup.style.display="block";
+popup.style.display="block";
 }
 });
 }
 
-function continueWithout(){
-notFoundPopup.style.display="none";
+function loadHistory(phone){
+historyBox.style.display="block";
+historyTable.innerHTML="<tr><th>Bill</th><th>Date</th><th>Total</th></tr>";
 
-currentClient = {
-name:"Walk-in Client",
-phone:searchNumber.value
-};
+db.collection("invoices").where("client.phone","==",phone)
+.get().then(snap=>{
+snap.forEach(doc=>{
+let d=doc.data();
+let row=historyTable.insertRow();
+row.innerHTML=`
+<td>${d.billNo}</td>
+<td>${new Date(d.date).toLocaleString()}</td>
+<td>${d.total}</td>`;
+});
+});
+}
 
-db.collection("clients").doc(searchNumber.value).set(currentClient);
+function searchBill(){
+let id=billSearch.value;
 
+db.collection("invoices").doc(id).get().then(doc=>{
+if(doc.exists){
+alert("Bill Found: "+doc.data().total);
+}
+});
+}
+
+function newClient(){
+popup.style.display="none";
+currentClient={name:"New Client",phone:phoneSearch.value};
+openBilling();
+}
+
+function walkIn(){
+popup.style.display="none";
+currentClient={name:"Walk-in",phone:"-"};
 openBilling();
 }
 
 function openBilling(){
 billingBox.style.display="block";
-
-clientDisplay.innerText =
-(currentClient.name||"") + " | " + (currentClient.phone||"");
-
-serviceTable.innerHTML =
-`<tr><th>Service</th><th>Price</th><th>Action</th></tr>`;
-
+clientTitle.innerText=currentClient.name;
+billingTable.innerHTML="<tr><th>Service</th><th>Qty</th><th>Price</th><th></th></tr>";
 addRow();
-calc();
 }
 
 function addRow(){
-let row = serviceTable.insertRow();
-
-row.innerHTML = `
-<td><input class="service"></td>
-<td><input type="number" class="price" oninput="calc()"></td>
-<td><button onclick="deleteRow(this)">❌</button></td>
-`;
-}
-
-function deleteRow(btn){
-btn.parentElement.parentElement.remove();
-calc();
+let row=billingTable.insertRow();
+row.innerHTML=`
+<td><input></td>
+<td><input type="number" value="1" onchange="calc()"></td>
+<td><input type="number" onchange="calc()"></td>
+<td><button onclick="this.parentElement.parentElement.remove();calc()">X</button></td>`;
 }
 
 function calc(){
-let totalValue = 0;
-
-document.querySelectorAll(".price").forEach(p=>{
-totalValue += parseFloat(p.value)||0;
+let t=0;
+[...billingTable.rows].slice(1).forEach(r=>{
+t+= (r.cells[1].children[0].value * r.cells[2].children[0].value);
 });
-
-total.innerText = totalValue;
+total.innerText=t;
 }
 
-function saveInvoice(){
+function saveBill(){
 let services=[];
-let valid=false;
-
-document.querySelectorAll("#serviceTable tr").forEach((tr,i)=>{
-if(i===0)return;
-
-let s = tr.querySelector(".service").value;
-let p = tr.querySelector(".price").value;
-
-if(s&&p){
-services.push({service:s,price:parseFloat(p)});
-valid=true;
-}
+[...billingTable.rows].slice(1).forEach(r=>{
+services.push({
+service:r.cells[0].children[0].value,
+qty:r.cells[1].children[0].value,
+price:r.cells[2].children[0].value
+});
 });
 
-if(!valid){
-alert("Add at least one service");
-return;
-}
+let billNo=Math.floor(100000+Math.random()*900000).toString();
 
-let invoiceId = "KH-"+Date.now();
-
-db.collection("invoices").doc(invoiceId).set({
-invoiceId,
+db.collection("invoices").doc(billNo).set({
+billNo,
 client:currentClient,
 services,
 total:parseFloat(total.innerText),
-status:"Pending",
 date:new Date().toISOString()
 }).then(()=>{
-alert("Invoice Saved!");
-billingBox.style.display="none";
-searchNumber.value="";
+alert("Saved: "+billNo);
 });
+}
+
+function printInvoice(){
+window.print();
 }
 </script>
 
