@@ -76,7 +76,14 @@
     .btn.secondary{background:#fff;color:var(--dark);border:1px solid var(--border);box-shadow:var(--shadow-sm)}
     .btn.ok{background:linear-gradient(135deg,var(--ok),#0f7036)}
 
-    .public-nav{display:none}
+    .public-nav{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin:-46px 0 26px;
+  position:relative;
+  z-index:2
+}
     .public-nav .btn{width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:14px}
 
     .card{
@@ -635,10 +642,21 @@ function showPublicPage(pageId){
   ['servicesPage','bookPage','bikeSalesPage','feedbackPage'].forEach(id=>el(id).classList.toggle('hidden', id!==pageId));
   if(pageId==='bikeSalesPage') renderBikeSales();
 }
-el('showServicesBtn').onclick=()=>showPublicPage('servicesPage');
-el('showBookBtn').onclick=()=>showPublicPage('bookPage');
-el('showBikeSalesBtn').onclick=()=>showPublicPage('bikeSalesPage');
-el('showFeedbackBtn').onclick=()=>showPublicPage('feedbackPage');
+if(el('showServicesBtn')){
+  el('showServicesBtn').onclick=()=>showPublicPage('servicesPage');
+}
+
+if(el('showBookBtn')){
+  el('showBookBtn').onclick=()=>showPublicPage('bookPage');
+}
+
+if(el('showBikeSalesBtn')){
+  el('showBikeSalesBtn').onclick=()=>showPublicPage('bikeSalesPage');
+}
+
+if(el('showFeedbackBtn')){
+  el('showFeedbackBtn').onclick=()=>showPublicPage('feedbackPage');
+}
 
 el('submitAppointmentBtn').onclick=()=>{
   const name=el('apptName').value.trim(), phone=el('apptPhone').value.trim(), bikeType=el('apptBikeType').value.trim();
@@ -1061,12 +1079,29 @@ el('removeBikePictureBtn').onclick=()=>{
   }
 };
 el('clearBikeFormBtn').onclick=clearBikeForm;
-el('openAdminBtnTop').onclick=()=>el('openAdminBtn').click();
-el('showBookBtnHero').onclick=()=>el('showBookBtn').click();
-el('showServicesBtnSide').onclick=()=>el('showServicesBtn').click();
-el('showBookBtnSide').onclick=()=>el('showBookBtn').click();
-el('showBikeSalesBtnSide').onclick=()=>el('showBikeSalesBtn').click();
-el('showFeedbackBtnSide').onclick=()=>el('showFeedbackBtn').click();
+if(el('openAdminBtnTop')){
+  el('openAdminBtnTop').onclick=()=>el('openAdminBtn')?.click();
+}
+
+if(el('showBookBtnHero')){
+  el('showBookBtnHero').onclick=()=>el('showBookBtn')?.click();
+}
+
+if(el('showServicesBtnSide')){
+  el('showServicesBtnSide').onclick=()=>showPublicPage('servicesPage');
+}
+
+if(el('showBookBtnSide')){
+  el('showBookBtnSide').onclick=()=>showPublicPage('bookPage');
+}
+
+if(el('showBikeSalesBtnSide')){
+  el('showBikeSalesBtnSide').onclick=()=>showPublicPage('bikeSalesPage');
+}
+
+if(el('showFeedbackBtnSide')){
+  el('showFeedbackBtnSide').onclick=()=>showPublicPage('feedbackPage');
+}
 loadPublicData();
 </script>
 </body>
